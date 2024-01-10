@@ -18,8 +18,9 @@ export class Airports {
   location: string;
 
   @Column()
-  coordinates: object;
-
+  latitude: number;
+  @Column()
+  longitude: number;
   @Column()
   IATCode: string;
 }

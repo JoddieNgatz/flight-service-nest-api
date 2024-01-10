@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Flight } from './flight.entity';
-
 import { NewFlightEvent } from '../events/new.flight.event';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -12,7 +11,7 @@ export class FlightService {
     @InjectRepository(Flight)
     private flightRepository: Repository<Flight>,
     private eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   async findAll(): Promise<Flight[]> {
     return this.flightRepository.find()
@@ -22,11 +21,22 @@ export class FlightService {
     return this.flightRepository.findOne({ where: { id } });
   }
 
+  // async create(flight: Partial<Flight>): Promise<Flight> {
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   const newflight = this.flightRepository.create(flight);
+  //   this.eventEmitter.emit('new.flight', new NewFlightEvent(flight.name));
+  //   return this.flightRepository.save(flight);
+  // }
   async create(flight: Partial<Flight>): Promise<Flight> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const newflight = this.flightRepository.create(flight);
-    this.eventEmitter.emit('new.flight', new NewFlightEvent(newflight.name));
-    return this.flightRepository.save(flight);
+    try {
+      const newflight = this.flightRepository.create(flight);
+      await this.flightRepository.save(newflight);
+      this.eventEmitter.emit('new.flight', new NewFlightEvent(flight.name));
+      return newflight;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 
   async update(id: number, flight: Partial<Flight>): Promise<Flight> {

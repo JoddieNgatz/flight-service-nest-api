@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column,  } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, } from "typeorm";
 
 /* 
 We are using the decorator @Entity() to tell TypeORM that this is an entity
@@ -19,7 +19,7 @@ export class Flight {
 
     @Column()
     lastService: string;
-    
+
 }
 
 

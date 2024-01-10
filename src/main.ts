@@ -7,8 +7,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // removes unnecessary properties in POST request body
-      transform: true,
+      //  whitelist: true, // removes unnecessary properties in POST request body
+      //   transform: true,
     }),
   );
   await app.listen(3000);
