@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {Flight} from './flight.entity';
+import { Flight } from './flight.entity';
+
+import { NewFlightEvent } from '../events/new.flight.event';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class FlightService {
   constructor(
     @InjectRepository(Flight)
     private flightRepository: Repository<Flight>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async findAll(): Promise<Flight[]> {
-    return this.flightRepository.find();
+    return this.flightRepository.find()
   }
 
   async findOne(id: number): Promise<Flight> {
@@ -19,7 +23,9 @@ export class FlightService {
   }
 
   async create(flight: Partial<Flight>): Promise<Flight> {
-    const newflight= this.flightRepository.create(flight);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const newflight = this.flightRepository.create(flight);
+    this.eventEmitter.emit('new.flight', new NewFlightEvent(newflight.name));
     return this.flightRepository.save(flight);
   }
 
@@ -32,9 +38,6 @@ export class FlightService {
     await this.flightRepository.delete(id);
   }
 }
-
-
-
 /*     We are using the decorator @Injectable() to tell NestJS that this is a service
 
     We are using the decorator @InjectRepository(User) to tell NestJS that we want to inject the repository of the User entity
